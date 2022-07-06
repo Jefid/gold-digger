@@ -3,7 +3,7 @@ const request = indexedDB.open('money_db', 1);
 
 request.onupgradeneeded = function(event) {
   const db = event.target.result;
-  db.createObjectStore('new_deposite', { autoIncrement: true });
+  db.createObjectStore('new_deposit', { autoIncrement: true });
   db.createObjectStore('new_expense', { autoIncrement: true });
 };
 
@@ -22,54 +22,64 @@ request.onsuccess = function(event) {
   console.log(event.target.errorCode);
 };
 
-// function saveRecord(record) {
-//   const transaction = db.transaction(['new_pizza'], 'readwrite');
+function saveDeposite(record) {
+  const transaction = db.transaction(['new_deposit'], 'readwrite');
 
-//   const pizzaObjectStore = transaction.objectStore('new_pizza');
+  const depositObjectStore = transaction.objectStore('new_deposit');
 
-//   // add record to your store with add method.
-//   pizzaObjectStore.add(record);
-// }
+  // add record to your store with add method.
+  depositObjectStore.add(record);
+}
 
-// function uploadPizza() {
-//   // open a transaction on your pending db
-//   const transaction = db.transaction(['new_pizza'], 'readwrite');
 
-//   // access your pending object store
-//   const pizzaObjectStore = transaction.objectStore('new_pizza');
+function saveExpense(record) {
+    const transaction = db.transaction(['new_expense'], 'readwrite');
+  
+    const expenseObjectStore = transaction.objectStore('new_expense');
+  
+    // add record to your store with add method.
+    expenseObjectStore.add(record);
+  }
 
-//   // get all records from store and set to a variable
-//   const getAll = pizzaObjectStore.getAll();
+function uploadPizza() {
+  // open a transaction on your pending db
+  const transaction = db.transaction(['new_pizza'], 'readwrite');
 
-//   getAll.onsuccess = function() {
-//     // if there was data in indexedDb's store, let's send it to the api server
-//     if (getAll.result.length > 0) {
-//       fetch('/api/pizzas', {
-//         method: 'POST',
-//         body: JSON.stringify(getAll.result),
-//         headers: {
-//           Accept: 'application/json, text/plain, */*',
-//           'Content-Type': 'application/json'
-//         }
-//       })
-//         .then(response => response.json())
-//         .then(serverResponse => {
-//           if (serverResponse.message) {
-//             throw new Error(serverResponse);
-//           }
+  // access your pending object store
+  const pizzaObjectStore = transaction.objectStore('new_pizza');
 
-//           const transaction = db.transaction(['new_pizza'], 'readwrite');
-//           const pizzaObjectStore = transaction.objectStore('new_pizza');
-//           // clear all items in your store
-//           pizzaObjectStore.clear();
-//         })
-//         .catch(err => {
-//           // set reference to redirect back here
-//           console.log(err);
-//         });
-//     }
-//   };
-// }
+  // get all records from store and set to a variable
+  const getAll = pizzaObjectStore.getAll();
+
+  getAll.onsuccess = function() {
+    // if there was data in indexedDb's store, let's send it to the api server
+    if (getAll.result.length > 0) {
+      fetch('/api/pizzas', {
+        method: 'POST',
+        body: JSON.stringify(getAll.result),
+        headers: {
+          Accept: 'application/json, text/plain, */*',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(response => response.json())
+        .then(serverResponse => {
+          if (serverResponse.message) {
+            throw new Error(serverResponse);
+          }
+
+          const transaction = db.transaction(['new_pizza'], 'readwrite');
+          const pizzaObjectStore = transaction.objectStore('new_pizza');
+          // clear all items in your store
+          pizzaObjectStore.clear();
+        })
+        .catch(err => {
+          // set reference to redirect back here
+          console.log(err);
+        });
+    }
+  };
+}
 
 // listen for app coming back online
 window.addEventListener('online', uploadPizza);

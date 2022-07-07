@@ -4,10 +4,17 @@ let myChart;
 // function to submit with no connection
 function saveRecord(record) {
   // open new transaction with DB with read/write permissions
+<<<<<<< HEAD
   const transaction = db.transaction(["new_trans"], "readwrite");
 
   // access the object store for 'new_trans'
   const transObjectStore = transaction.objectStore("new_trans");
+=======
+  const transaction = db.transaction(['new_trans'], 'readwrite');
+
+  // access the object store for 'new_trans'
+  const transObjectStore = transaction.objectStore('new_trans');
+>>>>>>> a00ef33726793360faf07caa6bf82def7d992291
 
   // add record with the 'add' method
   transObjectStore.add(record);
